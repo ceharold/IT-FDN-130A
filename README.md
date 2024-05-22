@@ -1,6 +1,6 @@
 # IT-FDN-130A
 ## Foundations Of Databases &amp; SQL Programming
 
-### Demonstrate the use of Views in SQL
+Demonstrate the use of Views in SQL
 
-### Run code in Microsoft SQL Server
+Run code in Microsoft SQL Server

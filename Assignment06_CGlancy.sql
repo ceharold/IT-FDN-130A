@@ -249,18 +249,18 @@ Grant Select On vProducts to Public;
 
 CREATE VIEW vProductsByCategories
 AS
- SELECT
- CategoryName
- ,ProductName
- ,UnitPrice
+ SELECT TOP 1000000000
+ c.CategoryName
+ ,p.ProductName
+ ,p.UnitPrice
  FROM Categories AS c
  JOIN Products AS p 
  ON c.CategoryID = p.CategoryID
+ ORDER BY c.CategoryName, p.ProductName ASC
 ;
 GO
 
 SELECT * FROM vProductsByCategories
-ORDER BY CategoryName, ProductName ASC
 ;
 
 -- Question 4 (10% pts): How can you create a view to show a list of Product names 
@@ -276,18 +276,18 @@ ORDER BY CategoryName, ProductName ASC
 
 CREATE VIEW vInventoriesByProductsByDates
 AS
- SELECT 
-  ProductName
-  ,InventoryDate
-  ,Count
+ SELECT TOP 1000000000
+  p.ProductName
+  ,i.InventoryDate
+  ,i.Count
  FROM Products AS p
  JOIN Inventories AS i
  ON p.ProductID = i.ProductId
+ ORDER BY 1,2,3
 ;
 GO
 
 SELECT * FROM vInventoriesByProductsByDates
-ORDER BY 1,2,3
 ;
 
 -- Question 5 (10% pts): How can you create a view to show a list of Inventory Dates 
@@ -310,16 +310,16 @@ ORDER BY 1,2,3
 
 CREATE VIEW vInventoriesByEmployeesByDates
 AS
- SELECT DISTINCT
- InventoryDate
- ,CONCAT (EmployeeFirstName, ' ', EmployeeLastName) AS EmployeeName
+ SELECT DISTINCT TOP 1000000000
+ i.InventoryDate
+ ,CONCAT (e.EmployeeFirstName, ' ', e.EmployeeLastName) AS EmployeeName
  FROM Employees AS e
  JOIN Inventories AS i
  ON e.EmployeeID = i.EmployeeID
+ ORDER BY i.InventoryDate ASC
 ;
 
 SELECT * FROM vInventoriesByEmployeesByDates
-ORDER BY InventoryDate ASC
 ;
 
 -- Question 6 (10% pts): How can you create a view show a list of Categories, Products, 
@@ -337,21 +337,21 @@ ORDER BY InventoryDate ASC
 
 CREATE VIEW vInventoriesByProductsByCategories
 AS
- SELECT 
- CategoryName
- ,ProductName
- ,InventoryDate
- ,Count
+ SELECT TOP 1000000000
+ c.CategoryName
+ ,p.ProductName
+ ,i.InventoryDate
+ ,i.Count
  FROM Categories AS c
  JOIN Products AS p
  ON c.CategoryID = p.CategoryID
  JOIN Inventories AS i
  ON i.ProductID = p.ProductID
+ ORDER BY c.CategoryName, p.ProductName, i.InventoryDate, i.Count ASC
  ;
  GO
 
 SELECT * FROM vInventoriesByProductsByCategories
-ORDER BY CategoryName, ProductName, InventoryDate, Count ASC
 ;
 
 -- Question 7 (10% pts): How can you create a view to show a list of Categories, Products, 
@@ -371,12 +371,12 @@ ORDER BY CategoryName, ProductName, InventoryDate, Count ASC
 
 CREATE VIEW vInventoriesByProductsByEmployees
 AS
- SELECT 
- CategoryName
- ,ProductName
- ,InventoryDate
- ,Count
- ,CONCAT (EmployeeFirstName, ' ', EmployeeLastName) AS EmployeeName
+ SELECT TOP 1000000000
+ c.CategoryName
+ ,p.ProductName
+ ,i.InventoryDate
+ ,i.Count
+ ,CONCAT (e.EmployeeFirstName, ' ', e.EmployeeLastName) AS EmployeeName
  FROM Categories AS c
  JOIN Products AS p
  ON c.CategoryID = p.CategoryID
@@ -384,11 +384,11 @@ AS
  ON i.ProductID = p.ProductID
  JOIN Employees AS e
  ON e.EmployeeID = i.EmployeeID
+ ORDER BY i.InventoryDate, c.CategoryName, p.ProductName, EmployeeName ASC
 ;
 GO
 
 SELECT * FROM vInventoriesByProductsByEmployees
-ORDER BY InventoryDate, CategoryName, ProductName, EmployeeName ASC
 ;
 
 -- Question 8 (10% pts): How can you create a view to show a list of Categories, Products, 
@@ -414,11 +414,12 @@ ORDER BY InventoryDate, CategoryName, ProductName, EmployeeName ASC
 
 CREATE VIEW vInventoriesForChaiAndChangByEmployees
 AS
- SELECT CategoryName
- ,ProductName
- ,InventoryDate
- ,Count
- ,CONCAT (EmployeeFirstName, ' ', EmployeeLastName) AS EmployeeName
+ SELECT TOP 1000000000
+  c.CategoryName
+ ,p.ProductName
+ ,i.InventoryDate
+ ,i.Count
+ ,CONCAT (e.EmployeeFirstName, ' ', e.EmployeeLastName) AS EmployeeName
  FROM Categories AS c
  JOIN Products AS p
  ON c.CategoryID = p.CategoryID
@@ -428,10 +429,10 @@ AS
  ON e.EmployeeID = i.EmployeeID
  WHERE 
  p.ProductName IN (SELECT ProductName FROM Products WHERE ProductName = 'Chai' OR ProductName = 'Chang')
+ ORDER BY i.InventoryDate, c.CategoryName, p.ProductName, EmployeeName ASC
 ;
 
 SELECT * FROM vInventoriesForChaiAndChangByEmployees
-ORDER BY InventoryDate, CategoryName, ProductName, EmployeeName ASC
 ;
 
 -- Question 9 (10% pts): How can you create a view to show a list of Employees and the Manager who manages them?
@@ -448,16 +449,16 @@ ORDER BY InventoryDate, CategoryName, ProductName, EmployeeName ASC
 
 CREATE VIEW vEmployeesByManager
 AS
- SELECT
+ SELECT TOP 1000000000
   CONCAT (m.EmployeeFirstName, ' ', m.EmployeeLastName) AS Manager
   ,CONCAT (e.EmployeeFirstName, ' ', e.EmployeeLastName) AS Employee
  FROM Employees AS e
  JOIN Employees AS m
  ON e.ManagerID = m.EmployeeID
+ ORDER BY Manager ASC
  ;
 
 SELECT * FROM vEmployeesByManager
-ORDER BY Manager ASC
 ;
 
 -- Question 10 (20% pts): How can you create one view to show all the data from all four 
@@ -475,32 +476,32 @@ ORDER BY Manager ASC
 
 CREATE VIEW vInventoriesByProductsByCategoriesByEmployees
 AS
- SELECT c.CategoryID
+SELECT TOP 1000000000
+  c.CategoryID
  ,c.CategoryName
  ,p.ProductID
  ,p.ProductName
  ,p.UnitPrice
- ,e.EmployeeID
- ,e.EmployeeFirstName + ' ' + e.EmployeeLastName AS Employee
- ,e.ManagerID
  ,i.InventoryID
  ,i.InventoryDate
- ,i.Count
+  ,i.Count
+ ,e.EmployeeID
+ ,e.EmployeeFirstName + ' ' + e.EmployeeLastName AS Employee
  ,m.EmployeeFirstName + ' ' + m.EmployeeLastName AS Manager
- FROM Inventories as i
-  INNER JOIN Products as p
+ FROM vInventories as i
+  INNER JOIN vProducts as p
   ON i.ProductID = p.ProductID
-  INNER JOIN Categories as c
+  INNER JOIN vCategories as c
   ON p.CategoryID = c.CategoryID
-  INNER JOIN Employees as e
+  INNER JOIN vEmployees as e
   ON i.EmployeeID = e.EmployeeID
-  INNER JOIN Employees as m
+  INNER JOIN vEmployees as m
   ON e.ManagerID = m.EmployeeID
+  ORDER BY c.CategoryID, p.ProductName, i.InventoryID, Employee ASC
   ;
 GO
 
 SELECT * FROM vInventoriesByProductsByCategoriesByEmployees
-ORDER BY CategoryID, ProductName, InventoryID, Employee ASC
 ;
 
 
